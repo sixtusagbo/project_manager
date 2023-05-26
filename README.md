@@ -1,9 +1,9 @@
-# Decorators
+# Project Manager
 
-I'm learning about decorators in TS here.
+This is a mini kanban. Simple project management tool written in TypeScript.
 
-## Existing solutions using decorators
+## Features
 
-Many packages use decorators. An example is [class-validator](https://github.com/typestack/class-validator).
-
-Also, [Angular](https://angular.io/) a framework use decorators too.
+- DOM Element Selection & Rendering with OOP
+- Form Validation (In Progress)
+- Drag and drop (In Progress)
