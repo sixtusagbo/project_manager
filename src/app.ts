@@ -1,3 +1,16 @@
+function autobind(_: any, __: string, descriptor: PropertyDescriptor) {
+  let initialMethod = descriptor.value;
+  const improvedDescriptor: PropertyDescriptor = {
+    configurable: true,
+    get() {
+      const boundMethod = initialMethod.bind(this);
+      return boundMethod;
+    },
+  };
+
+  return improvedDescriptor;
+}
+
 class ProjectInput {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
@@ -38,9 +51,10 @@ class ProjectInput {
   }
 
   private configure() {
-    this.element.addEventListener('submit', this.submitHandler.bind(this));
+    this.element.addEventListener('submit', this.submitHandler);
   }
 
+  @autobind
   private submitHandler(e: Event) {
     e.preventDefault();
     console.log(this.titleInputElement.value);
