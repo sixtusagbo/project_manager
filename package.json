@@ -1,0 +1,28 @@
+{
+  "name": "learn_ts",
+  "version": "1.0.0",
+  "description": "Project Management Application",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sixtusagbo/project_manger.git"
+  },
+  "keywords": [
+    "typescript",
+    "javascript",
+    "project manager",
+    "kanban"
+  ],
+  "author": "Sixtus Agbo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sixtusagbo/project_manger/issues"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  }
+}
