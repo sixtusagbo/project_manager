@@ -4,68 +4,26 @@
  * @author Sixtus Agbo <miracleagbosixtus@gmail.com>
  */
 
-enum ProjectStatus {
-  active,
-  finished,
+/**
+ * Implemented by any class that renders a draggable item.
+ */
+interface Draggable {
+  dragStartHandler(event: DragEvent): void;
+  dragEndHandler(event: DragEvent): void;
 }
-
-type Listener<T> = (items: T[]) => void;
-
-// Project Model
-class Project {
-  constructor(
-    public id: string,
-    public title: string,
-    public description: string,
-    public people: number,
-    public status: ProjectStatus
-  ) {}
-}
-
-// State Management
-class State<T> {
-  protected listeners: Listener<T>[] = [];
-
-  addListener(listenerFn: Listener<T>) {
-    this.listeners.push(listenerFn);
-  }
-}
-class ProjectState extends State<Project> {
-  private projects: Project[] = [];
-  private static instance: ProjectState;
-
-  private constructor() {
-    super();
-  }
-
-  static getInstance() {
-    if (this.instance) {
-      return this.instance;
-    }
-    this.instance = new ProjectState();
-    return this.instance;
-  }
-
-  addProject(title: string, description: string, numOfPeople: number) {
-    const newProject = new Project(
-      Date.now().toString(),
-      title,
-      description,
-      numOfPeople,
-      ProjectStatus.active
-    );
-
-    this.projects.push(newProject);
-    for (const listenerFn of this.listeners) {
-      listenerFn(this.projects.slice());
-    }
-  }
-}
-
-const projectState = ProjectState.getInstance();
 
 /**
- * Validation object interface
+ * Implemented by any class that renders an item,
+ * which can be used as a drag target.
+ */
+interface DragTarget {
+  dragOverHandler(event: DragEvent): void;
+  dropHandler(event: DragEvent): void;
+  dragLeaveHandler(event: DragEvent): void;
+}
+
+/**
+ * Validation object interface.
  */
 interface Validatable {
   value: string | number;
@@ -75,6 +33,21 @@ interface Validatable {
   min?: number;
   max?: number;
 }
+
+/**
+ * Specifies the various statuses of a project.
+ *
+ * @see Project for a use case.
+ */
+enum ProjectStatus {
+  active,
+  finished,
+}
+
+/**
+ * Subscribe to state change events.
+ */
+type Listener<T> = (items: T[]) => void;
 
 /**
  * Validates a validatable object, which is just a form input.
@@ -129,6 +102,76 @@ function autobind(_: any, __: string, descriptor: PropertyDescriptor) {
   return improvedDescriptor;
 }
 
+class Project {
+  /**
+   * Project Model
+   * @param id {string}
+   * @param title {string}
+   * @param description {string}
+   * @param people {number}
+   * @param status {ProjectStatus}
+   */
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
+}
+
+/**
+ * Application State Manager.
+ *
+ * Will be inherited by singletons that is used to manage a state.
+ *
+ * @see ProjectState where it is inherited.
+ */
+class State<T> {
+  protected listeners: Listener<T>[] = [];
+
+  addListener(listenerFn: Listener<T>) {
+    this.listeners.push(listenerFn);
+  }
+}
+
+/**
+ * This class holds the Project State.
+ */
+class ProjectState extends State<Project> {
+  private projects: Project[] = [];
+  private static instance: ProjectState;
+
+  private constructor() {
+    super();
+  }
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new ProjectState();
+    return this.instance;
+  }
+
+  addProject(title: string, description: string, numOfPeople: number) {
+    const newProject = new Project(
+      Date.now().toString(),
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.active
+    );
+
+    this.projects.push(newProject);
+    for (const listenerFn of this.listeners) {
+      listenerFn(this.projects.slice());
+    }
+  }
+}
+
+const projectState = ProjectState.getInstance();
+
 // Component Base Class
 abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   templateElement: HTMLTemplateElement;
@@ -173,7 +216,10 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   abstract renderContent(): void;
 }
 
-class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+class ProjectItem
+  extends Component<HTMLUListElement, HTMLLIElement>
+  implements Draggable
+{
   private get persons(): string {
     if (this.project.people === 1) {
       return '1 person';
@@ -184,10 +230,24 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
   constructor(hostId: string, private project: Project) {
     super('single-project', hostId, 'afterbegin', project.id);
 
+    this.configure();
     this.renderContent();
   }
 
-  configure(): void {}
+  @autobind
+  dragStartHandler(event: DragEvent) {
+    console.log(event);
+  }
+
+  @autobind
+  dragEndHandler(_: DragEvent) {
+    console.log('Drag End');
+  }
+
+  configure() {
+    this.element.addEventListener('dragstart', this.dragStartHandler);
+    this.element.addEventListener('dragend', this.dragEndHandler);
+  }
 
   renderContent(): void {
     this.element.querySelector('h2')!.textContent = this.project.title;

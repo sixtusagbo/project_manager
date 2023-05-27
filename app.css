@@ -1,6 +1,6 @@
 :root {
   --primary: #ff0062;
-  --secondary: #0044ff;
+  --secondary: #00bd00;
 }
 
 * {
@@ -113,6 +113,7 @@ button:active {
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.26);
   padding: 1rem;
   margin: 1rem;
+  background: #fff;
 }
 
 .projects li h2 {
