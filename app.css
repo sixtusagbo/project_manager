@@ -60,6 +60,18 @@ button:active {
   border-color: #a80041;
 }
 
+#app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#app * {
+  width: 100%;
+  max-width: 500px;
+}
+
 .projects {
   margin: 1rem;
   border: 1px solid var(--primary);
@@ -71,6 +83,7 @@ button:active {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 #finished-projects {
@@ -129,12 +142,4 @@ button:active {
   padding: 1rem;
   border: 1px solid var(--primary);
   background: #f7f7f7;
-  width: 100%;
-  max-width: 500px;
-}
-
-#app {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
