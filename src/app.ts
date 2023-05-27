@@ -50,7 +50,6 @@ class ProjectState {
       numOfPeople,
       ProjectStatus.active
     );
-    console.log(newProject);
 
     this.projects.push(newProject);
     for (const listenerFn of this.listeners) {
@@ -147,7 +146,15 @@ class ProjectList {
     this.element.id = `${type}-projects`;
 
     projectState.addListener((projects: Project[]) => {
-      this.assignedProjects = projects;
+      // Makes sure that the projects are added to the correct list
+      // depending on whether it is active or finished
+      const relevantProjects = projects.filter(project => {
+        if (this.type === 'active') {
+          return project.status === ProjectStatus.active;
+        }
+        return project.status === ProjectStatus.finished;
+      });
+      this.assignedProjects = relevantProjects;
       this.renderProjects();
     });
 
@@ -159,6 +166,12 @@ class ProjectList {
     const listEl = document.getElementById(
       `${this.type}-projects-list`
     )! as HTMLUListElement;
+
+    // Fix duplication of projects when new project is added
+    // I chose this because it's performance cost is better than
+    // comparing the DOM elements to find which that has been rendered.
+    listEl.innerHTML = '';
+
     for (const projectItem of this.assignedProjects) {
       const listItem = document.createElement('li');
       listItem.textContent = projectItem.title;
