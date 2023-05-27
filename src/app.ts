@@ -1,3 +1,61 @@
+/**
+ * Project Manager
+ *
+ * @author Sixtus Agbo <miracleagbosixtus@gmail.com>
+ */
+
+/**
+ * Validation object interface
+ */
+interface Validatable {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+}
+
+/**
+ * Validates a validatable object, which is just a form input.
+ *
+ * @param {Validatable} validatableInput Validatable object
+ */
+function validate(validatableInput: Validatable) {
+  let isValid = true;
+  const { value, required, minLength, maxLength, min, max } = validatableInput;
+
+  if (required) {
+    isValid = isValid && value.toString().trim().length !== 0;
+  }
+
+  if (minLength != null && typeof value === 'string') {
+    isValid = isValid && value.length >= minLength;
+  }
+
+  if (maxLength != null && typeof value === 'string') {
+    isValid = isValid && value.length <= maxLength;
+  }
+
+  if (min != null && typeof value === 'number') {
+    isValid = isValid && value >= min;
+  }
+
+  if (max != null && typeof value === 'number') {
+    isValid = isValid && value <= max;
+  }
+
+  return isValid;
+}
+
+/**
+ * Automatically binds `this` to event handlers.
+ *
+ * @param _ target
+ * @param __ method name
+ * @param {PropertyDescriptor} descriptor
+ * @returns {PropertyDescriptor} Improved Descriptor
+ */
 function autobind(_: any, __: string, descriptor: PropertyDescriptor) {
   let initialMethod = descriptor.value;
   const improvedDescriptor: PropertyDescriptor = {
@@ -71,12 +129,29 @@ class ProjectInput {
     const enteredTitle = this.titleInputElement.value;
     const enteredDescription = this.descriptionInputElement.value;
     const enteredPeople = this.peopleInputElement.value;
-    const enteredFieldsAreNotEmpty =
-      enteredTitle.trim().length === 0 ||
-      enteredDescription.trim().length === 0 ||
-      enteredPeople.trim().length === 0;
 
-    if (enteredFieldsAreNotEmpty) {
+    const titleValidatable: Validatable = {
+      value: enteredTitle,
+      required: true,
+    };
+    const descriptionValidatable: Validatable = {
+      value: enteredDescription,
+      required: true,
+      minLength: 5,
+    };
+    const peopleValidatable: Validatable = {
+      value: +enteredPeople,
+      required: true,
+      min: 1,
+      max: 10,
+    };
+
+    const enteredFieldsAreValid =
+      !validate(titleValidatable) ||
+      !validate(descriptionValidatable) ||
+      !validate(peopleValidatable);
+
+    if (enteredFieldsAreValid) {
       alert('Invalid input, please try again');
       return;
     }
