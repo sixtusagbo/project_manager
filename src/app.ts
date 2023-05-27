@@ -173,12 +173,31 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   abstract renderContent(): void;
 }
 
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+  constructor(hostId: string, private project: Project) {
+    super('single-project', hostId, 'afterbegin', project.id);
+
+    this.renderContent();
+  }
+
+  configure(): void {}
+
+  renderContent(): void {
+    this.element.querySelector('h2')!.textContent = this.project.title;
+    this.element.querySelector('h3')!.textContent =
+      this.project.people.toString();
+    this.element.querySelector('p')!.textContent = this.project.description;
+  }
+}
+
 class ProjectList extends Component<HTMLDivElement, HTMLElement> {
   assignedProjects: Project[];
+  listId: string;
 
   constructor(private type: 'active' | 'finished') {
     super('project-list', 'app', 'beforeend', `${type}-projects`);
     this.assignedProjects = [];
+    this.listId = `${this.type}-projects-list`;
 
     this.configure();
     this.renderContent();
@@ -200,26 +219,21 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
   }
 
   renderContent() {
-    const listId = `${this.type}-projects-list`;
-    this.element.querySelector('ul')!.id = listId;
+    this.element.querySelector('ul')!.id = this.listId;
     this.element.querySelector('h2')!.textContent =
       this.type.toUpperCase() + ' PROJECTS';
   }
 
   private renderProjects() {
-    const listEl = document.getElementById(
-      `${this.type}-projects-list`
-    )! as HTMLUListElement;
+    const listEl = document.getElementById(this.listId)! as HTMLUListElement;
 
     // Fix duplication of projects when new project is added
     // I chose this because it's performance cost is better than
     // comparing the DOM elements to find which that has been rendered.
     listEl.innerHTML = '';
 
-    for (const projectItem of this.assignedProjects) {
-      const listItem = document.createElement('li');
-      listItem.textContent = projectItem.title;
-      listEl.appendChild(listItem);
+    for (const project of this.assignedProjects) {
+      new ProjectItem(this.listId, project);
     }
   }
 }
