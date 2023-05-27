@@ -6,4 +6,4 @@ This is a mini kanban. Simple project management tool written in TypeScript.
 
 - DOM Element Selection & Rendering with OOP
 - Form Validation
-- Drag and drop (In Progress)
+- Drag and drop
