@@ -1,6 +1,8 @@
 :root {
   --primary: #ff0062;
   --secondary: #00bd00;
+  --droppable-primary: #ffe3ee;
+  --droppable-secondary: #d9ffd6;
 }
 
 * {
@@ -135,11 +137,11 @@ button:active {
 }
 
 .droppable {
-  background: #ffe3ee;
+  background: var(--droppable-primary);
 }
 
 #finished-projects .droppable {
-  background: #d6e1ff;
+  background: var(--droppable-secondary);
 }
 
 #user-input {
