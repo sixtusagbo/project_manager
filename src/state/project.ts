@@ -50,4 +50,9 @@ export class ProjectState extends State<Project> {
   }
 }
 
+/**
+ * Runs once - when the file is imported for the first time by any file.
+ *
+ * If another file imports this file again, this does not run again.
+ */
 export const projectState = ProjectState.getInstance();
