@@ -1,8 +1,6 @@
-/// <reference path="components/project_form.ts" />
-/// <reference path="components/project_list.ts" />
+import { ProjectForm } from './components/project_form.js';
+import { ProjectList } from './components/project_list.js';
 
-namespace App {
-  new ProjectForm();
-  new ProjectList('active');
-  new ProjectList('finished');
-}
+new ProjectForm();
+new ProjectList('active');
+new ProjectList('finished');
