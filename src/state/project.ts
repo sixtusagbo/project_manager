@@ -1,5 +1,5 @@
-import { Project, ProjectStatus } from '../models/project.js';
-import { State } from './base.js';
+import { Project, ProjectStatus } from '../models/project';
+import { State } from './base';
 
 /**
  * This class holds the Project State.
